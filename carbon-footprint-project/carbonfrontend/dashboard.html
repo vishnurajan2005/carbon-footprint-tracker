@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Carbon Footprint Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    section {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #2c7;
+    }
+    button {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🌱 Carbon Footprint Dashboard</h1>
+
+<!-- ================= MILESTONE 1 ================= -->
+<section>
+  <h2>1️⃣ Login</h2>
+  <input id="email" placeholder="Email"><br>
+  <input id="password" type="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
+</section>
+
+<!-- ================= MILESTONE 2 ================= -->
+<section>
+  <h2>2️⃣ Carbon Survey</h2>
+  <input id="transport" placeholder="Transport Mode"><br>
+  <input id="diet" placeholder="Diet Type"><br>
+  <input id="energy" type="number" placeholder="Energy Usage"><br>
+  <input id="freq" placeholder="Frequency"><br>
+  <button onclick="submitSurvey()">Submit Survey</button>
+  <p id="alert"></p>
+</section>
+
+<section>
+  <h2>📊 Carbon History</h2>
+  <ul id="historyList"></ul>
+  <button onclick="loadHistory()">Load History</button>
+</section>
+
+<!-- ================= MILESTONE 3 ================= -->
+<section>
+  <h2>3️⃣ Set Goal</h2>
+  <input id="target" type="number" placeholder="Target Carbon"><br>
+  <button onclick="createGoal()">Create Goal</button>
+</section>
+
+<section>
+  <h2>🏆 Leaderboard</h2>
+  <ul id="leaderboard"></ul>
+  <button onclick="loadLeaderboard()">Load Leaderboard</button>
+</section>
+
+<!-- ================= MILESTONE 4 ================= -->
+<section>
+  <h2>🛒 Eco Marketplace</h2>
+  <ul id="marketplace"></ul>
+  <button onclick="loadMarketplace()">Load Marketplace</button>
+</section>
+
+<script>
+const USER_ID = 7; // your tested user ID
+
+/* ---------- LOGIN ---------- */
+function login() {
+  fetch("http://localhost:8080/api/users/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  })
+  .then(r => r.json())
+  .then(() => alert("Login successful"));
+}
+
+/* ---------- SURVEY ---------- */
+function submitSurvey() {
+  fetch("http://localhost:8080/api/survey/" + USER_ID, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      transportMode: transport.value,
+      dietType: diet.value,
+      energyUsage: energy.value,
+      frequency: freq.value
+    })
+  })
+  .then(r => r.text())
+  .then(msg => {
+    alert(msg);
+    if (energy.value > 20) {
+      alert.innerText = "⚠ High carbon usage detected!";
+    } else {
+      alert.innerText = "";
+    }
+  });
+}
+
+/* ---------- CARBON HISTORY (FIXED) ---------- */
+function loadHistory() {
+  const historyList = document.getElementById("historyList");
+  historyList.innerHTML = "";
+
+  fetch("http://localhost:8080/api/carbon/history/" + USER_ID)
+    .then(r => r.json())
+    .then(data => {
+      data.forEach(l => {
+        let li = document.createElement("li");
+        li.innerText = l.logDate + " → " + l.carbonAmount;
+        historyList.appendChild(li);
+      });
+    })
+    .catch(err => {
+      alert("Error loading history");
+      console.error(err);
+    });
+}
+
+/* ---------- GOAL ---------- */
+function createGoal() {
+  fetch("http://localhost:8080/api/goals", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      targetCarbon: target.value,
+      user: { id: USER_ID }
+    })
+  })
+  .then(r => r.json())
+  .then(() => alert("Goal created successfully"));
+}
+
+/* ---------- LEADERBOARD ---------- */
+function loadLeaderboard() {
+  const list = document.getElementById("leaderboard");
+  list.innerHTML = "";
+
+  fetch("http://localhost:8080/api/leaderboard")
+    .then(r => r.json())
+    .then(data => {
+      data.forEach(u => {
+        let li = document.createElement("li");
+        li.innerText = u.userName + " → " + u.badgeCount + " badges";
+        list.appendChild(li);
+      });
+    });
+}
+
+/* ---------- MARKETPLACE ---------- */
+function loadMarketplace() {
+  const list = document.getElementById("marketplace");
+  list.innerHTML = "";
+
+  fetch("http://localhost:8080/api/marketplace")
+    .then(r => r.json())
+    .then(items => {
+      items.forEach(i => {
+        let li = document.createElement("li");
+        li.innerHTML =
+          i.itemName + " (₹" + i.price + ") " +
+          "<button onclick='buy(" + i.id + ")'>Buy</button>";
+        list.appendChild(li);
+      });
+    });
+}
+
+function buy(itemId) {
+  fetch(
+    "http://localhost:8080/api/transactions?userId=" +
+      USER_ID +
+      "&itemId=" +
+      itemId,
+    { method: "POST" }
+  )
+  .then(r => r.json())
+  .then(() => alert("Transaction successful"));
+}
+</script>
+
+</body>
+</html>
+
