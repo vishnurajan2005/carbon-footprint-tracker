@@ -153,9 +153,9 @@ POST /api/transactions
 This project is developed for educational purposes as part of coursework and learning milestones.
 
 👤 Author
-Vishnu Rajan G S
-pranav kumbhar
-pradeep S V
+Vishnu Rajan G S,
+pranav kumbhar,
+pradeep S V,
 Manjunath G H
 
 
