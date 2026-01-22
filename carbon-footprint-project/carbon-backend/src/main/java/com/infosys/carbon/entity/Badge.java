@@ -24,6 +24,14 @@ public class Badge {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public Badge(LocalDateTime awardedAt, String badgeName, String description, Long id, User user) {
+        this.awardedAt = awardedAt;
+        this.badgeName = badgeName;
+        this.description = description;
+        this.id = id;
+        this.user = user;
+    }
+
     @PrePersist
     protected void onAward() {
         this.awardedAt = LocalDateTime.now();
