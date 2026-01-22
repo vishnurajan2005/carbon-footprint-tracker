@@ -16,7 +16,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Register
+    // User registration
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         return ResponseEntity.ok(userService.registerUser(user));
@@ -34,5 +34,6 @@ public class UserController {
         return ResponseEntity.ok(Map.of("token", token));
     }
 }
+
 
 
