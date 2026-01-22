@@ -26,6 +26,8 @@
 <body>
 
 <h1>🌱 Carbon Footprint Dashboard</h1>
+<p id="welcomeMsg"></p>
+
 
 <!-- ================= MILESTONE 1 ================= -->
 <section>
@@ -74,6 +76,12 @@
 
 <script>
 const USER_ID = 7; // your tested user ID
+
+  document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("welcomeMsg").innerText =
+    "Hi User 👋 Welcome back to your dashboard";
+});
+
 
 /* ---------- LOGIN ---------- */
 function login() {
@@ -195,4 +203,5 @@ function buy(itemId) {
 
 </body>
 </html>
+
 
