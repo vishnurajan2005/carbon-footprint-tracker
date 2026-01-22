@@ -24,6 +24,7 @@ public class Badge {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Creates a badge for a user when a defined progress milestone is achieved
     public Badge(LocalDateTime awardedAt, String badgeName, String description, Long id, User user) {
         this.awardedAt = awardedAt;
         this.badgeName = badgeName;
